@@ -1,39 +1,30 @@
-let nodeIsRunning = false;
+// URL اصلی برای پینگ کردن
+const PING_URL = "https://app.nexus.xyz/";
 
-// Function to start the node
-function startNode() {
-    if (nodeIsRunning) return;
-    console.log("Starting Nexus Node...");
-    nodeIsRunning = true;
-    // Code to start your actual Nexus node goes here
+// تابعی که یک درخواست GET به سایت ارسال می‌کند
+function pingNode() {
+    fetch(PING_URL, { method: 'GET', mode: 'no-cors' })
+        .then(response => {
+            console.log("Ping successful at", new Date().toLocaleTimeString());
+        })
+        .catch(err => {
+            console.error("Ping failed:", err);
+        });
 }
 
-// Function to stop the node (optional)
-function stopNode() {
-    if (!nodeIsRunning) return;
-    console.log("Stopping Nexus Node...");
-    nodeIsRunning = false;
-    // Code to stop the Nexus node goes here
-}
+// زمان‌بندی: هر 5 دقیقه (300000 میلی‌ثانیه)
+const INTERVAL = 300000;
 
-// Start node on installation of the extension
-chrome.runtime.onInstalled.addListener(() => {
-    startNode();
-});
+// اجرای اولین پینگ بلافاصله
+pingNode();
 
-// Toggle node state when the extension icon is clicked
-chrome.action.onClicked.addListener(() => {
-    if (nodeIsRunning) {
-        stopNode();
-    } else {
-        startNode();
-    }
-});
+// تنظیم تکرار پینگ در پس‌زمینه
+setInterval(pingNode, INTERVAL);
 
-// Listener for messages from popup
+// Listener برای دریافت پیام‌های احتمالی از بخش‌های دیگر (اختیاری)
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === "getNexus") {
-        // Replace the URL below with the actual URL you want to load in the popup iframe
-        sendResponse({ iframeUrl: "https://your-nexus-url.com" });
+    if (message.action === "pingNow") {
+        pingNode();
+        sendResponse({ status: "Pinging now" });
     }
 });
