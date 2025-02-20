@@ -1,17 +1,17 @@
 {
   "manifest_version": 3,
-  "name": "Nexus Node",
+  "name": "Nexus Node Keeper",
   "version": "1.0",
-  "description": "Nexus Node Extension by @themeht",
+  "description": "Keeps the Nexus node online by periodically pinging https://app.nexus.xyz/",
   "permissions": [
-    "activeTab",
     "storage",
-    "background"
+    "activeTab"
   ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "icon.png",
       "48": "icon.png",
